@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReClasifica Lab - MVP Web Público | UNIMINUTO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            labBeige: '#FAF6EC',
+            labTeal: '#0E7C6B',
+            labTealDark: '#095A4E',
+            uniminutoYellow: '#FFC907',
+            actionBlue: '#2563EB',
+            catPlastico: '#F26B4F',
+            catPapel: '#F2C94C',
+            catVidrio: '#6FCF97',
+            catRevision: '#9CA3AF',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF6EC;
+      color: #1F2937;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(14, 124, 107, 0.14);
+      box-shadow: 0 10px 25px -5px rgba(14, 124, 107, 0.06), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
+    }
+    .phase-tab.active {
+      background-color: #0E7C6B;
+      color: #FFFFFF;
+      border-color: #0E7C6B;
+    }
+    @keyframes pulseSoft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .animate-pulse-soft {
+      animation: pulseSoft 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-labTeal selection:text-white">
+
+  <!-- 1. HEADER FIJO -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-teal-900/10 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#inicio" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-lg bg-labTeal flex items-center justify-center text-white font-display font-bold text-lg shadow-sm group-hover:bg-labTealDark transition">
+          R
+        </div>
+        <div class="leading-tight">
+          <span class="font-display font-bold text-gray-900 text-base sm:text-lg tracking-tight">ReClasifica Lab</span>
+          <span class="hidden sm:inline-block mx-1.5 text-gray-300">|</span>
+          <span class="block sm:inline-block text-xs font-semibold text-labTeal uppercase tracking-wider">UNIMINUTO</span>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-600">
+        <a href="#inicio" class="hover:text-labTeal transition">Inicio</a>
+        <a href="#problema" class="hover:text-labTeal transition">Problema</a>
+        <a href="#metodologia" class="hover:text-labTeal transition">Metodología</a>
+        <a href="#clasificador" class="hover:text-labTeal transition">Clasificador</a>
+        <a href="#resultados" class="hover:text-labTeal transition">Resultados</a>
+        <a href="#validacion" class="hover:text-labTeal transition">Validación</a>
+        <a href="#futuro" class="hover:text-labTeal transition">Futuro</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="#clasificador" class="bg-actionBlue hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+          <span>Probar MVP</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. HERO -->
+  <section id="inicio" class="relative pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Metadatos Académicos -->
+      <div class="flex flex-wrap items-center gap-2 mb-6">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-uniminutoYellow/25 text-gray-900 border border-uniminutoYellow">
+          <span class="w-2 h-2 rounded-full bg-labTeal"></span>
+          Ingeniería en Ciencia de Datos e IA · 2026
+        </span>
+        <span class="text-xs text-gray-500 font-medium">
+          Autora: <strong class="text-gray-800">Luciana Sofia Criado Castillo</strong> · Asesor: <strong class="text-gray-800">Víctor Andrés Hernández Arias</strong>
+        </span>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-10 items-center">
+        <div class="lg:col-span-8">
+          <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-labTeal mb-2">
+            Sistema Básico de Clasificación y Conteo Automatizado de Residuos Mediante Imágenes
+          </p>
+          <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-gray-900 leading-tight mb-5">
+            “Clasificar mejor empieza por mirar distinto. Un sistema básico, reproducible y verificable para recopilar, clasificar y cuantificar residuos aprovechables.”
+          </h1>
+          <p class="text-base sm:text-lg text-gray-600 leading-relaxed mb-7 max-w-3xl">
+            No prometemos una IA que ya reconoce fotos. Entregamos un proceso con reglas transparentes, conteo verificable y un MVP que cualquier persona puede reproducir.
+          </p>
+
+          <!-- Recuadro de honestidad académica en verde clarito -->
+          <div class="bg-emerald-50/90 border-l-4 border-labTeal rounded-r-xl p-4 sm:p-5 mb-8 shadow-sm">
+            <div class="flex items-start gap-3">
+              <div class="p-1.5 bg-labTeal/10 rounded-lg text-labTeal shrink-0 mt-0.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <h2 class="font-display font-bold text-sm text-labTealDark uppercase tracking-wide">Alcance real y honestidad académica</h2>
+                <p class="text-sm text-gray-700 mt-1">
+                  <strong>Alcance real:</strong> El MVP usa reglas conceptuales por color y forma que el usuario selecciona. No analiza píxeles de una foto automáticamente.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <a href="#clasificador" class="bg-labTeal hover:bg-labTealDark text-white font-semibold px-6 py-3 rounded-xl shadow-md transition">
+              Probar Simulador en Vivo
+            </a>
+            <a href="https://clasificador-residuos-luciana.mariavalentina084.chatgpt.site" target="_blank" rel="noopener noreferrer" class="bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 font-semibold px-5 py-3 rounded-xl shadow-sm transition inline-flex items-center gap-2 text-sm">
+              <span>Ver MVP Web Público</span>
+              <svg class="w-4 h-4 text-labTeal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4 Mini-stats animadas -->
+        <div class="lg:col-span-4 grid grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-labTeal">
+            <div class="text-3xl sm:text-4xl font-display font-extrabold text-labTeal counter-stat" data-target="19">0</div>
+            <p class="text-xs sm:text-sm font-semibold text-gray-800 mt-1">imágenes en piloto</p>
+            <p class="text-xs text-gray-500 mt-1">Muestra inicial auditada</p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-uniminutoYellow">
+            <div class="text-3xl sm:text-4xl font-display font-extrabold text-gray-900 counter-stat" data-target="3">0</div>
+            <p class="text-xs sm:text-sm font-semibold text-gray-800 mt-1">categorías base</p>
+            <p class="text-xs text-gray-500 mt-1">Plástico, Papel y Vidrio</p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-actionBlue">
+            <div class="text-3xl sm:text-4xl font-display font-extrabold text-actionBlue counter-stat" data-target="6">0</div>
+            <p class="text-xs sm:text-sm font-semibold text-gray-800 mt-1">pruebas funcionales</p>
+            <p class="text-xs text-gray-500 mt-1">100% aprobadas en flujo</p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-emerald-500">
+            <div class="text-3xl sm:text-4xl font-display font-extrabold text-emerald-600"><span class="counter-stat" data-target="100">0</span>%</div>
+            <p class="text-xs sm:text-sm font-semibold text-gray-800 mt-1">trazable</p>
+            <p class="text-xs text-gray-500 mt-1">Regla + explicación + carpeta</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SECCIÓN EL PROBLEMA -->
+  <section id="problema" class="py-16 bg-white border-y border-teal-900/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Diagnóstico</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">El Problema: ¿Por qué falla el registro básico?</h2>
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">Antes de entrenar modelos complejos, es indispensable resolver el desorden operativo y la ambigüedad visual en la captura de datos.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-10">
+        <div class="rounded-2xl p-6 bg-labBeige/70 border border-amber-900/10">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold mb-4">01</div>
+          <h3 class="font-display font-bold text-lg text-gray-900 mb-2">La clasificación manual es lenta y variable</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">Sin un protocolo explícito, dos personas pueden etiquetar el mismo residuo de forma distinta según su criterio subjetivo o fatiga.</p>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-labBeige/70 border border-amber-900/10">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-labTeal flex items-center justify-center font-bold mb-4">02</div>
+          <h3 class="font-display font-bold text-lg text-gray-900 mb-2">Un objeto transparente se confunde entre plástico y vidrio</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">En una imagen estática, la transparencia por sí sola no distingue una botella PET de un envase de vidrio sin analizar forma y contexto.</p>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-labBeige/70 border border-amber-900/10">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-actionBlue flex items-center justify-center font-bold mb-4">03</div>
+          <h3 class="font-display font-bold text-lg text-gray-900 mb-2">Sin nombres de archivo y criterios comunes, el conteo pierde consistencia</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">Archivos desordenados impiden auditar de dónde salió cada cifra, rompiendo la trazabilidad necesaria en ciencia de datos.</p>
+        </div>
+      </div>
+
+      <!-- Pregunta orientadora destacada -->
+      <div class="rounded-2xl bg-gradient-to-r from-labTeal to-labTealDark text-white p-6 sm:p-8 shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+          <div class="px-3 py-1 bg-uniminutoYellow text-gray-900 font-display font-bold text-xs uppercase tracking-wider rounded-md self-start shrink-0">
+            Pregunta Orientadora
+          </div>
+          <p class="font-display font-semibold text-base sm:text-xl leading-snug">
+            “¿Cómo organizar un proceso básico y reproducible para recopilar, clasificar y cuantificar imágenes de residuos aprovechables mediante criterios de color y forma, y cómo representar ese proceso en un MVP web?”
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SECCIÓN METODOLOGÍA EN 3 FASES + CRONOGRAMA -->
+  <section id="metodologia" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Arquitectura del Proceso</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">Metodología en 3 Fases y Cronograma</h2>
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">Haz clic en cada fase para inspeccionar sus reglas operativas y entregables verificables.</p>
+      </div>
+
+      <!-- Selector interactivo de 3 fases -->
+      <div class="flex flex-wrap gap-3 mb-6">
+        <button onclick="selectPhase(1)" id="tab-phase-1" class="phase-tab active px-5 py-3 rounded-xl border border-gray-300 font-display font-semibold text-sm transition shadow-sm">
+          Fase 1: Recopilación
+        </button>
+        <button onclick="selectPhase(2)" id="tab-phase-2" class="phase-tab bg-white px-5 py-3 rounded-xl border border-gray-300 font-display font-semibold text-sm text-gray-700 hover:border-labTeal transition shadow-sm">
+          Fase 2: Clasificación
+        </button>
+        <button onclick="selectPhase(3)" id="tab-phase-3" class="phase-tab bg-white px-5 py-3 rounded-xl border border-gray-300 font-display font-semibold text-sm text-gray-700 hover:border-labTeal transition shadow-sm">
+          Fase 3: Cuantificación
+        </button>
+      </div>
+
+      <!-- Panel dinámico de fase -->
+      <div id="phase-content" class="glass-card rounded-2xl p-6 sm:p-8 mb-12 transition-all">
+        <!-- Renderizado por JS -->
+      </div>
+
+      <!-- 7 Etapas del Cronograma -->
+      <div class="glass-card rounded-2xl p-6 sm:p-8">
+        <h3 class="font-display font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-uniminutoYellow"></span>
+          Línea de Ejecución: 7 Etapas del Cronograma
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+          <div class="p-3.5 rounded-xl bg-labBeige border border-teal-900/10 text-center">
+            <span class="inline-block w-7 h-7 rounded-full bg-labTeal text-white font-bold text-xs leading-7 mb-2">1</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">Formulación</p>
+            <p class="text-[11px] text-gray-500 mt-1">Alcance y pregunta</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-labBeige border border-teal-900/10 text-center">
+            <span class="inline-block w-7 h-7 rounded-full bg-labTeal text-white font-bold text-xs leading-7 mb-2">2</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">Recopilación</p>
+            <p class="text-[11px] text-gray-500 mt-1">19 imágenes piloto</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-labBeige border border-teal-900/10 text-center">
+            <span class="inline-block w-7 h-7 rounded-full bg-labTeal text-white font-bold text-xs leading-7 mb-2">3</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">Clasificación</p>
+            <p class="text-[11px] text-gray-500 mt-1">Reglas color + forma</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-labBeige border border-teal-900/10 text-center">
+            <span class="inline-block w-7 h-7 rounded-full bg-labTeal text-white font-bold text-xs leading-7 mb-2">4</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">Cuantificación</p>
+            <p class="text-[11px] text-gray-500 mt-1">Conteo y porcentajes</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-labBeige border border-teal-900/10 text-center">
+            <span class="inline-block w-7 h-7 rounded-full bg-labTeal text-white font-bold text-xs leading-7 mb-2">5</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">MVP</p>
+            <p class="text-[11px] text-gray-500 mt-1">Interfaz web pública</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-labBeige border border-teal-900/10 text-center">
+            <span class="inline-block w-7 h-7 rounded-full bg-labTeal text-white font-bold text-xs leading-7 mb-2">6</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">Evaluación</p>
+            <p class="text-[11px] text-gray-500 mt-1">6 pruebas funcionales</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-uniminutoYellow/25 border border-uniminutoYellow text-center col-span-2 sm:col-span-1">
+            <span class="inline-block w-7 h-7 rounded-full bg-gray-900 text-uniminutoYellow font-bold text-xs leading-7 mb-2">7</span>
+            <p class="font-display font-semibold text-xs sm:text-sm text-gray-900">Cierre</p>
+            <p class="text-[11px] text-gray-700 mt-1">Sustentación y hoja ruta</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. KPIs + RESULTADOS DEL PILOTO -->
+  <section id="resultados" class="py-16 bg-white border-y border-teal-900/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Evidencia Empírica · n = 19</span>
+          <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">KPIs y Resultados Reales del Piloto</h2>
+          <p class="text-gray-600 mt-2 text-sm sm:text-base">Distribución exacta verificada sobre las 19 imágenes del conjunto piloto (suma total = 100.00%).</p>
+        </div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-labBeige border border-teal-900/10 text-xs font-semibold text-gray-700">
+          <span>Total Auditado:</span>
+          <span class="text-base font-display font-bold text-labTeal">19 imágenes (100.00%)</span>
+        </div>
+      </div>
+
+      <!-- 4 Tarjetas KPI -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
+        <div class="rounded-2xl p-5 border-2 border-catPlastico/40 bg-orange-50/40">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">Plástico</span>
+            <span class="w-3.5 h-3.5 rounded-full bg-catPlastico"></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-display font-extrabold text-3xl text-gray-900">8</span>
+            <span class="text-sm font-bold text-catPlastico">42.11%</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Carpeta: <code>/plastico/</code></p>
+        </div>
+
+        <div class="rounded-2xl p-5 border-2 border-catPapel/50 bg-yellow-50/40">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">Papel</span>
+            <span class="w-3.5 h-3.5 rounded-full bg-catPapel"></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-display font-extrabold text-3xl text-gray-900">3</span>
+            <span class="text-sm font-bold text-amber-600">15.79%</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Carpeta: <code>/papel/</code></p>
+        </div>
+
+        <div class="rounded-2xl p-5 border-2 border-catVidrio/50 bg-emerald-50/40">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">Vidrio</span>
+            <span class="w-3.5 h-3.5 rounded-full bg-catVidrio"></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-display font-extrabold text-3xl text-gray-900">3</span>
+            <span class="text-sm font-bold text-emerald-600">15.79%</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Carpeta: <code>/vidrio/</code></p>
+        </div>
+
+        <div class="rounded-2xl p-5 border-2 border-catRevision/50 bg-gray-100/70">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-600">Otros / Revisión</span>
+            <span class="w-3.5 h-3.5 rounded-full bg-catRevision"></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-display font-extrabold text-3xl text-gray-900">5</span>
+            <span class="text-sm font-bold text-gray-600">26.31%</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Escalado a revisión humana</p>
+        </div>
+      </div>
+
+      <!-- Gráficos Chart.js -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <div class="glass-card rounded-2xl p-6">
+          <h3 class="font-display font-bold text-base sm:text-lg text-gray-900 mb-1">Participación Porcentual del Piloto (%)</h3>
+          <p class="text-xs text-gray-500 mb-4">Cálculo exacto: (Cantidad / 19) × 100</p>
+          <div class="relative h-72 sm:h-80 w-full">
+            <canvas id="donutChart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6">
+          <h3 class="font-display font-bold text-base sm:text-lg text-gray-900 mb-1">Conteo Absoluto por Categoría (Unidades)</h3>
+          <p class="text-xs text-gray-500 mb-4">Total consolidado = 19 registros verificados</p>
+          <div class="relative h-72 sm:h-80 w-full">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interpretación Honesta -->
+      <div class="rounded-2xl bg-amber-50 border border-amber-300 p-6">
+        <div class="flex items-start gap-3.5">
+          <div class="p-2 rounded-lg bg-amber-200/70 text-amber-900 shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h4 class="font-display font-bold text-sm uppercase tracking-wide text-amber-900">Interpretación Honesta de los Datos</h4>
+            <p class="text-sm sm:text-base text-gray-800 mt-1 leading-relaxed">
+              “El plástico domina porque la muestra no está balanceada. No se puede generalizar a una ciudad. <strong>El 26.31% en revisión es el hallazgo clave: color y forma no siempre discriminan el material.</strong>”
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. SECCIÓN CLASIFICADOR INTERACTIVO -->
+  <section id="clasificador" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Demo Funcional en Vivo</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">Clasificador Interactivo por Reglas</h2>
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">Selecciona los atributos visuales observados en el residuo para ejecutar el motor de reglas deterministas y auditar los contadores en tiempo real.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <!-- Panel de control del simulador -->
+        <div class="lg:col-span-6 glass-card rounded-2xl p-6 sm:p-8 border-t-4 border-t-labTeal">
+          <h3 class="font-display font-bold text-lg text-gray-900 mb-5">1. Parámetros de Entrada</h3>
+
+          <div class="space-y-5">
+            <div>
+              <label for="selectColor" class="block text-sm font-semibold text-gray-800 mb-1.5">Color predominante del residuo</label>
+              <select id="selectColor" class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-800 focus:border-labTeal focus:ring-2 focus:ring-labTeal/20 outline-none">
+                <option value="Transparente">Transparente</option>
+                <option value="Blanco">Blanco</option>
+                <option value="Ámbar">Ámbar</option>
+                <option value="Verde">Verde</option>
+                <option value="Café">Café</option>
+                <option value="Impreso">Impreso</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="selectForma" class="block text-sm font-semibold text-gray-800 mb-1.5">Forma física observable</label>
+              <select id="selectForma" class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-800 focus:border-labTeal focus:ring-2 focus:ring-labTeal/20 outline-none">
+                <option value="Flexible">Flexible</option>
+                <option value="Plana">Plana</option>
+                <option value="Cilíndrica">Cilíndrica</option>
+                <option value="Rectangular">Rectangular</option>
+                <option value="Irregular">Irregular</option>
+                <option value="Doblada">Doblada</option>
+              </select>
+            </div>
+
+            <div class="pt-2 flex flex-wrap gap-3">
+              <button type="button" onclick="clasificarResiduo()" class="flex-1 bg-actionBlue hover:bg-blue-700 active:scale-[0.99] text-white font-display font-semibold py-3.5 px-6 rounded-xl shadow-md transition cursor-pointer">
+                Clasificar
+              </button>
+              <button type="button" onclick="reiniciarContadores()" class="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 font-semibold py-3.5 px-5 rounded-xl transition cursor-pointer text-sm">
+                Reiniciar contadores
+              </button>
+            </div>
+          </div>
+
+          <!-- Guía rápida de reglas -->
+          <div class="mt-6 pt-5 border-t border-gray-200 text-xs text-gray-500 space-y-1">
+            <p class="font-semibold text-gray-700">Reglas deterministas configuradas:</p>
+            <p>• <span class="font-medium text-gray-800">Transparente + Flexible</span> → Plástico (<code>/plastico/</code>)</p>
+            <p>• <span class="font-medium text-gray-800">Blanco + Plana</span> → Papel (<code>/papel/</code>)</p>
+            <p>• <span class="font-medium text-gray-800">Ámbar + Cilíndrica</span> → Vidrio (<code>/vidrio/</code>)</p>
+            <p>• <span class="font-medium text-gray-800">Otra combinación</span> → Revisión Manual (sin forzar etiqueta)</p>
+          </div>
+        </div>
+
+        <!-- Resultado y contadores en vivo -->
+        <div class="lg:col-span-6 space-y-6">
+          <!-- Tarjeta de salida de regla -->
+          <div id="resultadoCard" class="glass-card rounded-2xl p-6 sm:p-8 border-l-8 border-l-labTeal">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Salida del Motor de Reglas</span>
+              <span id="badgeRegla" class="px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-labTeal">Listo para clasificar</span>
+            </div>
+            <h3 id="resCategoria" class="font-display font-extrabold text-2xl text-gray-900 mb-2">
+              Selecciona atributos y haz clic en “Clasificar”
+            </h3>
+            <p id="resExplicacion" class="text-sm text-gray-600 leading-relaxed mb-4">
+              Cada ejecución registra la regla aplicada, justifica la decisión y asigna la carpeta de destino para garantizar trazabilidad completa.
+            </p>
+            <div class="bg-labBeige rounded-xl px-4 py-3 flex items-center justify-between border border-teal-900/10">
+              <span class="text-xs font-semibold text-gray-600">Carpeta sugerida:</span>
+              <code id="resCarpeta" class="text-sm font-bold text-labTeal">/pendiente/</code>
+            </div>
+          </div>
+
+          <!-- Contadores en vivo -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-display font-bold text-base text-gray-900">Contadores de Sesión en Vivo</h4>
+              <span class="text-xs text-gray-500">Actualización instantánea</span>
+            </div>
+
+            <div class="grid grid-cols-5 gap-2 sm:gap-3 text-center">
+              <div class="p-3 rounded-xl bg-orange-50 border border-catPlastico/40">
+                <div id="cntPlastico" class="font-display font-extrabold text-xl sm:text-2xl text-catPlastico">0</div>
+                <div class="text-[11px] font-semibold text-gray-700 mt-0.5">Plástico</div>
+              </div>
+              <div class="p-3 rounded-xl bg-yellow-50 border border-catPapel/60">
+                <div id="cntPapel" class="font-display font-extrabold text-xl sm:text-2xl text-amber-600">0</div>
+                <div class="text-[11px] font-semibold text-gray-700 mt-0.5">Papel</div>
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-50 border border-catVidrio/60">
+                <div id="cntVidrio" class="font-display font-extrabold text-xl sm:text-2xl text-emerald-600">0</div>
+                <div class="text-[11px] font-semibold text-gray-700 mt-0.5">Vidrio</div>
+              </div>
+              <div class="p-3 rounded-xl bg-gray-100 border border-gray-300">
+                <div id="cntRevision" class="font-display font-extrabold text-xl sm:text-2xl text-gray-600">0</div>
+                <div class="text-[11px] font-semibold text-gray-700 mt-0.5">Revisión</div>
+              </div>
+              <div class="p-3 rounded-xl bg-labTeal text-white shadow-sm">
+                <div id="cntTotal" class="font-display font-extrabold text-xl sm:text-2xl">0</div>
+                <div class="text-[11px] font-semibold text-teal-100 mt-0.5">Total</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. SECCIÓN VALIDACIÓN Y CONFIANZA -->
+  <section id="validacion" class="py-16 bg-white border-y border-teal-900/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Aseguramiento de Calidad</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">Validación Funcional y Usabilidad</h2>
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">Matriz de casos de prueba ejecutados sobre la lógica del MVP para verificar determinismo y control de estado.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start mb-8">
+        <!-- Tabla de 6 pruebas funcionales -->
+        <div class="lg:col-span-8 overflow-x-auto glass-card rounded-2xl">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-labBeige border-b border-teal-900/10 text-xs font-display font-bold uppercase text-gray-700">
+                <th class="py-3.5 px-4">ID Prueba</th>
+                <th class="py-3.5 px-4">Caso Evaluado</th>
+                <th class="py-3.5 px-4">Resultado Esperado</th>
+                <th class="py-3.5 px-4 text-right">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm">
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-labTeal">P-01</td>
+                <td class="py-3.5 px-4 font-medium text-gray-800">Transparente + Flexible</td>
+                <td class="py-3.5 px-4 text-gray-600">Plástico</td>
+                <td class="py-3.5 px-4 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Aprobado</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-labTeal">PA-01</td>
+                <td class="py-3.5 px-4 font-medium text-gray-800">Blanco + Plana</td>
+                <td class="py-3.5 px-4 text-gray-600">Papel</td>
+                <td class="py-3.5 px-4 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Aprobado</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-labTeal">V-01</td>
+                <td class="py-3.5 px-4 font-medium text-gray-800">Ámbar + Cilíndrica</td>
+                <td class="py-3.5 px-4 text-gray-600">Vidrio</td>
+                <td class="py-3.5 px-4 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Aprobado</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-labTeal">R-01</td>
+                <td class="py-3.5 px-4 font-medium text-gray-800">Combinación no concluyente</td>
+                <td class="py-3.5 px-4 text-gray-600">Revisión Manual</td>
+                <td class="py-3.5 px-4 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Aprobado</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-labTeal">C-01</td>
+                <td class="py-3.5 px-4 font-medium text-gray-800">Cuatro ejecuciones</td>
+                <td class="py-3.5 px-4 text-gray-600">Total 4</td>
+                <td class="py-3.5 px-4 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Aprobado</span></td>
+              </tr>
+              <tr>
+                <td class="py-3.5 px-4 font-mono font-bold text-labTeal">C-02</td>
+                <td class="py-3.5 px-4 font-medium text-gray-800">Reinicio</td>
+                <td class="py-3.5 px-4 text-gray-600">Todos en 0</td>
+                <td class="py-3.5 px-4 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Aprobado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3 Tarjetas de Usabilidad -->
+        <div class="lg:col-span-4 space-y-4">
+          <div class="rounded-2xl p-5 bg-labBeige border border-teal-900/10">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-display font-bold text-sm text-gray-900">Navegación</h3>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Cumple</span>
+            </div>
+            <p class="text-xs text-gray-600">Acceso directo a cada sección del flujo metodológico y retorno inmediato al simulador.</p>
+          </div>
+
+          <div class="rounded-2xl p-5 bg-labBeige border border-teal-900/10">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-display font-bold text-sm text-gray-900">Controles con etiquetas</h3>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Cumple</span>
+            </div>
+            <p class="text-xs text-gray-600">Selectores explícitos de Color y Forma con retroalimentación textual y carpeta sugerida.</p>
+          </div>
+
+          <div class="rounded-2xl p-5 bg-labBeige border border-teal-900/10">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-display font-bold text-sm text-gray-900">Responsive en móvil</h3>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Cumple</span>
+            </div>
+            <p class="text-xs text-gray-600">Adaptable tanto a pantalla de celular como a proyección en aula universitaria.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aclaración metodológica -->
+      <div class="rounded-xl bg-slate-100 border-l-4 border-slate-600 p-4 text-sm text-gray-700">
+        <strong>Nota de rigor técnico:</strong> “Aprobado significa que la interfaz respondió según la regla definida. No es una métrica de precisión de visión artificial.”
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. SECCIÓN LIMITACIONES COMO FORTALEZA -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Transparencia Científica</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">Limitaciones Documentadas como Fortaleza</h2>
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">Reconocer explícitamente el alcance del MVP evita sobrepromesas y define con precisión el trabajo de ingeniería siguiente.</p>
+      </div>
+
+      <div class="overflow-x-auto glass-card rounded-2xl">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-labTeal text-white text-xs font-display font-bold uppercase tracking-wider">
+              <th class="py-4 px-5">Limitación Actual</th>
+              <th class="py-4 px-5">Impacto Técnico</th>
+              <th class="py-4 px-5">Acción Futura Planificada</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 text-sm">
+            <tr class="hover:bg-white/60">
+              <td class="py-4 px-5 font-bold text-gray-900">19 imágenes</td>
+              <td class="py-4 px-5 text-gray-600">Baja representatividad</td>
+              <td class="py-4 px-5 font-medium text-labTealDark">Ampliar y balancear conjunto</td>
+            </tr>
+            <tr class="hover:bg-white/60">
+              <td class="py-4 px-5 font-bold text-gray-900">Reglas manuales</td>
+              <td class="py-4 px-5 text-gray-600">No aprende patrones</td>
+              <td class="py-4 px-5 font-medium text-labTealDark">Entrenar y comparar modelos de visión</td>
+            </tr>
+            <tr class="hover:bg-white/60">
+              <td class="py-4 px-5 font-bold text-gray-900">Sin métrica de precisión</td>
+              <td class="py-4 px-5 text-gray-600">No se conoce exactitud en datos nuevos</td>
+              <td class="py-4 px-5 font-medium text-labTealDark">Crear conjunto de prueba y matriz de confusión</td>
+            </tr>
+            <tr class="hover:bg-white/60">
+              <td class="py-4 px-5 font-bold text-gray-900">Sin persistencia</td>
+              <td class="py-4 px-5 text-gray-600">Contadores se pierden al reiniciar</td>
+              <td class="py-4 px-5 font-medium text-labTealDark">Agregar almacenamiento y exportación</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. SECCIÓN FUTURO - PROPUESTA DE EVOLUCIÓN -->
+  <section id="futuro" class="py-16 bg-white border-t border-teal-900/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-labTeal">Hoja de Ruta</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl text-gray-900 mt-1">Propuesta de Evolución del Sistema</h2>
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">Escalamiento progresivo desde reglas trazables hacia aprendizaje profundo auditado.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="rounded-2xl p-6 bg-labBeige border border-teal-900/10 relative">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-labTeal text-white font-display font-bold text-sm mb-4">1</span>
+          <h3 class="font-display font-bold text-base text-gray-900 mb-2">Ampliar dataset</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">Incorporar diversidad de iluminación, fondos y ángulos con trazabilidad de licencias de uso.</p>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-labBeige border border-teal-900/10 relative">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-labTeal text-white font-display font-bold text-sm mb-4">2</span>
+          <h3 class="font-display font-bold text-base text-gray-900 mb-2">Doble etiquetado</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">Validación cruzada entre anotadores y registro sistemático de desacuerdos en casos ambiguos.</p>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-labBeige border border-teal-900/10 relative">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-labTeal text-white font-display font-bold text-sm mb-4">3</span>
+          <h3 class="font-display font-bold text-base text-gray-900 mb-2">Carga real de fotos</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">Habilitar subida directa de imágenes en el navegador con persistencia y exportación de reportes.</p>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-labBeige border border-teal-900/10 relative">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-labTeal text-white font-display font-bold text-sm mb-4">4</span>
+          <h3 class="font-display font-bold text-base text-gray-900 mb-2">Evaluar MobileNetV3</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">Entrenar con datos separados (train/val/test) y reportar métricas por categoría, no solo promedio.</p>
+        </div>
+      </div>
+
+      <!-- Cierre destacado -->
+      <div class="rounded-2xl bg-gray-900 text-white p-6 sm:p-8 text-center shadow-lg">
+        <p class="font-display font-bold text-lg sm:text-2xl text-uniminutoYellow">
+          “Este MVP es la especificación funcional de la versión futura.”
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. FOOTER -->
+  <footer class="bg-labTealDark text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <p class="text-xs sm:text-sm font-medium text-teal-50">
+        Proyecto UNIMINUTO 2026 - Luciana Sofia Criado Castillo - Asesor: Víctor Andrés Hernández Arias - Economía circular y datos trazables
+      </p>
+      <a href="#inicio" class="text-xs font-semibold text-uniminutoYellow hover:underline shrink-0">
+        Volver arriba ↑
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    // Animación de mini-stats en el Hero
+    document.addEventListener('DOMContentLoaded', () => {
+      const counters = document.querySelectorAll('.counter-stat');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const duration = 1100;
+        const stepTime = Math.max(Math.floor(duration / target), 25);
+        let current = 0;
+        const timer = setInterval(() => {
+          current += 1;
+          counter.textContent = current;
+          if (current >= target) {
+            counter.textContent = target;
+            clearInterval(timer);
+          }
+        }, stepTime);
+      });
+
+      // Inicializar Fase 1
+      selectPhase(1);
+      // Inicializar Gráficos
+      initCharts();
+    });
+
+    // Datos de las 3 Fases de Metodología
+    const phasesData = {
+      1: {
+        badge: 'Fase 01 · Captura y Estandarización',
+        title: 'Recopilación y Control de Calidad de Entrada',
+        description: 'Proceso estructurado para buscar, filtrar, validar, renombrar y organizar cada imagen antes de su clasificación.',
+        bullets: [
+          'Flujo operativo: Buscar → Filtrar → Validar → Renombrar → Organizar.',
+          'Criterio de aceptación 1: Residuo claramente reconocible en la toma.',
+          'Criterio de aceptación 2: Resolución legible sin desenfoque extremo.',
+          'Criterio de aceptación 3: Formato estándar y nomenclatura consistente.'
+        ]
+      },
+      2: {
+        badge: 'Fase 02 · Motor de Decisión Transparente',
+        title: 'Clasificación por Reglas Visuales y Escalamiento',
+        description: 'Definición de reglas visuales explícitas combinando color y forma, incorporando revisión manual obligatoria para casos ambiguos.',
+        bullets: [
+          'Regla Plástico: Transparente + Flexible.',
+          'Regla Papel: Blanco + Plana.',
+          'Regla Vidrio: Ámbar + Cilíndrica.',
+          'Control de ambigüedad: Si la combinación no es concluyente, se envía a Revisión Manual sin forzar la etiqueta.'
+        ]
+      },
+      3: {
+        badge: 'Fase 03 · Agregación y Verificación Matemática',
+        title: 'Cuantificación y Consolidación Auditada',
+        description: 'Conteo por categoría, cálculo porcentual exacto y validación de integridad suma = 100%.',
+        bullets: [
+          'Conteo absoluto por cada carpeta de destino (/plastico/, /papel/, /vidrio/, /revision/).',
+          'Fórmula aplicada: Porcentaje = (Cantidad / Total) × 100.',
+          'Consolidación en tabla resumen y visualización gráfica.',
+          'Auditoría final: Verificación estricta de que la suma porcentual sea igual al 100.00%.'
+        ]
+      }
+    };
+
+    function selectPhase(phaseNum) {
+      document.querySelectorAll('.phase-tab').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.add('bg-white', 'text-gray-700');
+      });
+      const activeBtn = document.getElementById(`tab-phase-${phaseNum}`);
+      activeBtn.classList.add('active');
+      activeBtn.classList.remove('bg-white', 'text-gray-700');
+
+      const data = phasesData[phaseNum];
+      const container = document.getElementById('phase-content');
+      container.innerHTML = `
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-labTeal">${data.badge}</span>
+          <span class="text-xs font-semibold text-gray-400">Fase ${phaseNum} de 3</span>
+        </div>
+        <h3 class="font-display font-bold text-xl sm:text-2xl text-gray-900 mb-2">${data.title}</h3>
+        <p class="text-sm sm:text-base text-gray-600 mb-5">${data.description}</p>
+        <div class="grid sm:grid-cols-2 gap-3">
+          ${data.bullets.map(item => `
+            <div class="flex items-start gap-2.5 p-3.5 rounded-xl bg-labBeige/80 border border-teal-900/10">
+              <span class="w-2 h-2 rounded-full bg-labTeal mt-1.5 shrink-0"></span>
+              <span class="text-xs sm:text-sm font-medium text-gray-800">${item}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Gráficos Chart.js con datos reales del piloto (n = 19)
+    function initCharts() {
+      const labels = ['Plástico (8)', 'Papel (3)', 'Vidrio (3)', 'Otros / Revisión (5)'];
+      const colors = ['#F26B4F', '#F2C94C', '#6FCF97', '#9CA3AF'];
+
+      // Gráfico de Dona (%)
+      const donutCtx = document.getElementById('donutChart').getContext('2d');
+      new Chart(donutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: [42.11, 15.79, 15.79, 26.31],
+            backgroundColor: colors,
+            borderColor: '#FFFFFF',
+            borderWidth: 3,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '62%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 16,
+                font: { family: 'Inter', size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.label}: ${context.parsed}%`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Gráfico de Barras (Cantidades)
+      const barCtx = document.getElementById('barChart').getContext('2d');
+      new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Plástico', 'Papel', 'Vidrio', 'Otros / Revisión'],
+          datasets: [{
+            label: 'Cantidad de imágenes',
+            data: [8, 3, 3, 5],
+            backgroundColor: colors,
+            borderRadius: 8,
+            maxBarThickness: 54
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 10,
+              ticks: { stepSize: 2, font: { family: 'Inter', size: 12 } },
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            x: {
+              ticks: { font: { family: 'Inter', size: 12, weight: '600' } },
+              grid: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const pcts = ['42.11%', '15.79%', '15.79%', '26.31%'];
+                  return ` ${context.parsed.y} imágenes (${pcts[context.dataIndex]})`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Lógica del Clasificador Interactivo
+    let conteos = {
+      plastico: 0,
+      papel: 0,
+      vidrio: 0,
+      revision: 0,
+      total: 0
+    };
+
+    function actualizarContadoresDOM() {
+      document.getElementById('cntPlastico').textContent = conteos.plastico;
+      document.getElementById('cntPapel').textContent = conteos.papel;
+      document.getElementById('cntVidrio').textContent = conteos.vidrio;
+      document.getElementById('cntRevision').textContent = conteos.revision;
+      document.getElementById('cntTotal').textContent = conteos.total;
+    }
+
+    function clasificarResiduo() {
+      const color = document.getElementById('selectColor').value;
+      const forma = document.getElementById('selectForma').value;
+
+      const card = document.getElementById('resultadoCard');
+      const badge = document.getElementById('badgeRegla');
+      const titulo = document.getElementById('resCategoria');
+      const explicacion = document.getElementById('resExplicacion');
+      const carpeta = document.getElementById('resCarpeta');
+
+      if (color === 'Transparente' && forma === 'Flexible') {
+        conteos.plastico++;
+        card.style.borderLeftColor = '#F26B4F';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800';
+        badge.textContent = 'Regla P-01 Aplicada';
+        titulo.textContent = 'Plástico';
+        explicacion.textContent = 'Coincidencia exacta con criterio visual: material transparente y estructura flexible (ej. empaques o bolsas limpias).';
+        carpeta.textContent = '/plastico/';
+      } else if (color === 'Blanco' && forma === 'Plana') {
+        conteos.papel++;
+        card.style.borderLeftColor = '#F2C94C';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-amber-800';
+        badge.textContent = 'Regla PA-01 Aplicada';
+        titulo.textContent = 'Papel';
+        explicacion.textContent = 'Coincidencia exacta con criterio visual: superficie blanca y geometría plana (ej. hojas o cartulina limpia).';
+        carpeta.textContent = '/papel/';
+      } else if (color === 'Ámbar' && forma === 'Cilíndrica') {
+        conteos.vidrio++;
+        card.style.borderLeftColor = '#6FCF97';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
+        badge.textContent = 'Regla V-01 Aplicada';
+        titulo.textContent = 'Vidrio';
+        explicacion.textContent = 'Coincidencia exacta con criterio visual: tonalidad ámbar y cuerpo rígido cilíndrico (ej. envase de vidrio).';
+        carpeta.textContent = '/vidrio/';
+      } else {
+        conteos.revision++;
+        card.style.borderLeftColor = '#9CA3AF';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-800';
+        badge.textContent = 'Regla R-01 · Caso Ambiguo';
+        titulo.textContent = 'Revisión Manual';
+        explicacion.textContent = 'No forzamos la etiqueta. Una persona debe revisar la imagen, fuente y contexto.';
+        carpeta.textContent = '/revision_manual/';
+      }
+
+      conteos.total++;
+      actualizarContadoresDOM();
+    }
+
+    function reiniciarContadores() {
+      conteos = { plastico: 0, papel: 0, vidrio: 0, revision: 0, total: 0 };
+      actualizarContadoresDOM();
+
+      const card = document.getElementById('resultadoCard');
+      const badge = document.getElementById('badgeRegla');
+      const titulo = document.getElementById('resCategoria');
+      const explicacion = document.getElementById('resExplicacion');
+      const carpeta = document.getElementById('resCarpeta');
+
+      card.style.borderLeftColor = '#0E7C6B';
+      badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-labTeal';
+      badge.textContent = 'Contadores reiniciados';
+      titulo.textContent = 'Todos los contadores en 0';
+      explicacion.textContent = 'Listo para iniciar una nueva ronda de pruebas funcionales.';
+      carpeta.textContent = '/pendiente/';
+    }
+  </script>
+</body>
+</html>
